@@ -10,17 +10,22 @@ const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     backgroundColor: theme.palette.background.paper,
+    paddingBottom: 100,
   },
 }));
 
 export default function ListComponent(props) {
   const classes = useStyles();
 
+  const onSelectPodcast = (index) => {
+    props.onSelect(index);
+  } 
+
   return (
     <List component="nav" className={classes.root}>
       { props.podcasts.map((podcast, index) => {
             return (
-              <ListItem key={ podcast.id + index } button component="a" href={ podcast.url }>
+              <ListItem selected={props.activePodcastNumber === index} key={ podcast.id + index } button onClick={ () => onSelectPodcast(index) } value={index}>
                    <ListItemIcon>
                        <PlayIcon />
                   </ListItemIcon>

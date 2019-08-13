@@ -6,6 +6,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import HeaderComponent from './Components/Header.js';
 import ListComponent from './Components/List.js';
+import PlayerComponent from './Components/Player.js';
+
 import './App.css';
 
 const theme = createMuiTheme({
@@ -19,7 +21,11 @@ const sectionId = 432;
 
 class App extends Component {
   state = {
-    podcasts: []
+    podcasts: [],
+    isPlaying: false,
+    activePodcastNumber: null,
+    activePodcast: null,
+    activePodcastUrl: ''
   }
 
   componentDidMount() {
@@ -43,15 +49,33 @@ class App extends Component {
     );
   }
 
+  selectPodcast = (podcastNumber) => {
+    this.setState({ isPlaying: true, activePodcastNumber: podcastNumber, activePodcast: this.state.podcasts[podcastNumber] });
+  }
+
+  playNext = () => {
+    if(this.state.podcasts[this.state.activePodcastNumber + 1]) { 
+      this.setState({ activePodcastNumber: this.state.activePodcastNumber + 1, activePodcast: this.state.podcasts[this.state.activePodcastNumber + 1] });
+    }
+    else {
+      this.setState({ activePodcast: null, activePodcastNumber: null })
+    }
+  }
+
+
+ 
   render() {
     return (
       <MuiThemeProvider theme={theme}>
+
         <CssBaseline />
       
         <HeaderComponent />
 
-        <ListComponent podcasts={this.state.podcasts} />
-        
+        <ListComponent onSelect={this.selectPodcast} podcasts={this.state.podcasts} activePodcastNumber={this.state.activePodcastNumber} />
+
+        { this.state.activePodcast ? <PlayerComponent activePodcast={this.state.activePodcast} playNext={this.playNext} /> : '' }
+
       </MuiThemeProvider>
     );
   }
