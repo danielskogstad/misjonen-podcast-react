@@ -42,6 +42,10 @@ const styles = theme => ({
     scrollText: {
         '-webkit-transition': 'transform 8s, width 6s',
         '-webkit-transition-timing-function': 'linear',
+        '-moz-transition': 'transform 8s, width 6s',
+        '-moz-transition-timing-function': 'linear',
+        'transition': 'transform 8s, width 6s',
+        'transition-timing-function': 'linear',
         maxWidth: 400,
     }
   });
