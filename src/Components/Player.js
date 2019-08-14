@@ -113,7 +113,15 @@ class PlayerComponent extends Component {
 
         this.setState({ currentTime: currentTimeString, duration: durationTimeString, durationPercentage: durationPercentage })
         if(this.state.isPlaying) {
-            localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
+            const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
+
+            if(cachedBookmark) {
+                const bookmark = JSON.parse(cachedBookmark);
+
+                if(this.player.currentTime > bookmark.time) {
+                    localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
+                }
+            }
         }
     }
 
@@ -146,16 +154,13 @@ class PlayerComponent extends Component {
     playTest = () => {
         this.setState({ isPlaying: true });
 
-        setTimeout(() => {
-            const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
-            if(cachedBookmark) {
-                const bookmark = JSON.parse(cachedBookmark);
-                if(this.player.currentTime < bookmark.time - 5) {
-
-                    this.player.currentTime = parseInt(bookmark.time);
-                }   
-            }
-        }, 100);
+        const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
+        if(cachedBookmark) {
+            const bookmark = JSON.parse(cachedBookmark);
+            if(this.player.currentTime < bookmark.time - 5) {
+                this.player.currentTime = parseInt(bookmark.time);
+            }   
+        }
     }
 
     onProgressClick = (event) => {
