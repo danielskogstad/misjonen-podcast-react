@@ -25,11 +25,28 @@ class App extends Component {
     isPlaying: false,
     activePodcastNumber: null,
     activePodcast: null,
-    activePodcastUrl: ''
+    activePodcastUrl: '',
+    autoPlay: false
   }
 
   componentDidMount() {
-    this.getAllPodcasts(sectionId).subscribe((data) => this.setState({ podcasts: data.reverse() }));
+    const cachedPodcasts = localStorage.getItem(`podcasts-${sectionId}`);
+
+    if(cachedPodcasts) {
+      this.setInitialState(JSON.parse(cachedPodcasts));
+    }
+    else {
+      this.getAllPodcasts(sectionId).subscribe((data) => {
+        const podcasts = data.reverse();
+        localStorage.setItem(`podcasts-${sectionId}`, JSON.stringify(podcasts))
+        this.setInitialState(podcasts);
+      });
+    }
+  }
+
+  setInitialState(podcasts) {
+    const lastSelectedPodcast = localStorage.getItem('lastSelectedPodcast');
+    this.setState({ podcasts: podcasts, activePodcastNumber: parseInt(lastSelectedPodcast), activePodcast: podcasts[lastSelectedPodcast] })
   }
 
   getPodcasts(sectionId, pageNumber) {
@@ -50,20 +67,21 @@ class App extends Component {
   }
 
   selectPodcast = (podcastNumber) => {
-    this.setState({ isPlaying: true, activePodcastNumber: podcastNumber, activePodcast: this.state.podcasts[podcastNumber] });
+    this.setState({ activePodcastNumber: podcastNumber, activePodcast: this.state.podcasts[podcastNumber], autoPlay: true });
+    localStorage.setItem(`lastSelectedPodcast`, podcastNumber);
   }
 
   playNext = () => {
     if(this.state.podcasts[this.state.activePodcastNumber + 1]) { 
       this.setState({ activePodcastNumber: this.state.activePodcastNumber + 1, activePodcast: this.state.podcasts[this.state.activePodcastNumber + 1] });
+      localStorage.setItem(`lastSelectedPodcast`, this.state.activePodcastNumber + 1);
     }
     else {
       this.setState({ activePodcast: null, activePodcastNumber: null })
+      localStorage.setItem(`lastSelectedPodcast`, undefined);
     }
   }
 
-
- 
   render() {
     return (
       <MuiThemeProvider theme={theme}>
@@ -74,7 +92,7 @@ class App extends Component {
 
         <ListComponent onSelect={this.selectPodcast} podcasts={this.state.podcasts} activePodcastNumber={this.state.activePodcastNumber} />
 
-        { this.state.activePodcast ? <PlayerComponent activePodcast={this.state.activePodcast} playNext={this.playNext} /> : '' }
+        { this.state.activePodcastNumber ? <PlayerComponent activePodcast={this.state.activePodcast} playNext={this.playNext} autoPlay={this.state.autoPlay} /> : '' }
 
       </MuiThemeProvider>
     );

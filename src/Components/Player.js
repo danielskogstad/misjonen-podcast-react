@@ -84,16 +84,26 @@ class PlayerComponent extends Component {
         }, 10000);
 
         this.player = this.rap.audioEl;
+        this.setInitialState();
     }
 
     componentWillUnmount = () => {
         clearInterval(this.interval);
     }
 
-    startPlaying = () => {
-        this.setState({ isPlaying: true })
+    playerReady = () => {
         this.updatePlayer();
     }
+
+    setInitialState() {
+        const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
+
+        if(cachedBookmark) {
+            const bookmark = JSON.parse(cachedBookmark);
+            
+            this.player.currentTime = bookmark.time;
+        }
+    } 
 
     updatePlayer = () => {
         var currentTimeString = this.getTimeString(this.player.currentTime);
@@ -102,6 +112,9 @@ class PlayerComponent extends Component {
         var durationPercentage = parseFloat((this.player.currentTime / this.player.duration) * 100);
 
         this.setState({ currentTime: currentTimeString, duration: durationTimeString, durationPercentage: durationPercentage })
+        if(this.state.isPlaying) {
+            localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
+        }
     }
 
     getTimeString(time) {
@@ -130,6 +143,21 @@ class PlayerComponent extends Component {
         }
     }
 
+    playTest = () => {
+        this.setState({ isPlaying: true });
+
+        setTimeout(() => {
+            const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
+            if(cachedBookmark) {
+                const bookmark = JSON.parse(cachedBookmark);
+                if(this.player.currentTime < bookmark.time - 5) {
+
+                    this.player.currentTime = parseInt(bookmark.time);
+                }   
+            }
+        }, 100);
+    }
+
     onProgressClick = (event) => {
         const clickedX = event.nativeEvent.offsetX;
         
@@ -143,10 +171,11 @@ class PlayerComponent extends Component {
             transform: `translateX(${this.state.scrollTextTranslate})`,
             width: this.state.scrollTextWidth,
         }
+
         return (
             <div className={this.props.classes.root}>
                 <AppBar position="fixed" color="default" className={this.props.classes.appBar}>
-                    <ReactAudioPlayer ref={(element) => { this.rap = element; }} autoPlay={true} onCanPlay={this.startPlaying} listenInterval={1000} onEnded={this.props.playNext} onListen={this.updatePlayer} src={this.props.activePodcast.url } />
+                    <ReactAudioPlayer ref={(element) => { this.rap = element; }} autoPlay={ this.props.autoPlay } onPlay={this.playTest} onCanPlay={this.playerReady} listenInterval={1000} onEnded={this.props.playNext} onListen={this.updatePlayer} src={this.props.activePodcast.url } />
                     <Box m={2} display="flex" flex-direction="row" justify="flex-start" alignItems="center" className={this.props.classes.box}>
                         <Box m={0} flexShrink={0}>
                             <IconButton onClick={ this.onPlayClick }>
@@ -157,7 +186,7 @@ class PlayerComponent extends Component {
                             <Typography ref={this.titleRef} noWrap variant="h6" style={ scrollTextStyle } className={this.props.classes.scrollText}>
                                 {this.props.activePodcast.title }
                                 <Typography noWrap variant="body2">
-                                {this.props.activePodcast.description }
+                                {this.props.activePodcast.description}
                                 </Typography>
                             </Typography>
                         </Box>

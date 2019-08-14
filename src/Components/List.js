@@ -4,7 +4,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemIcon';
 import PlayIcon from '@material-ui/icons/PlayArrow';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,7 +21,20 @@ export default function ListComponent(props) {
 
   const onSelectPodcast = (index) => {
     props.onSelect(index);
-  } 
+
+  }
+
+  const getProgress = (id, duration) => {
+    const cachedBookmark = localStorage.getItem(`bookmark-${id}`);
+
+    if(cachedBookmark) {
+      const bookmark = JSON.parse(cachedBookmark);
+      
+      return parseFloat((bookmark.time / (duration / 1000)) * 100);
+    }
+
+    return 0;
+  }
 
   return (
     <List component="nav" className={classes.root}>
@@ -30,6 +45,9 @@ export default function ListComponent(props) {
                        <PlayIcon />
                   </ListItemIcon>
                   <ListItemText primary={ podcast.title } secondary={ podcast.description } />
+                  <ListItemSecondaryAction>
+                    <LinearProgress variant="determinate" value={ getProgress(podcast.id, podcast.duration) } style={{ width: 50 }} />
+                  </ListItemSecondaryAction>
               </ListItem> 
             ) 
         }) 
