@@ -122,6 +122,9 @@ class PlayerComponent extends Component {
                     localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
                 }
             }
+            else {
+                localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
+            }
         }
     }
 
