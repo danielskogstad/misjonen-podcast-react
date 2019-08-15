@@ -45,9 +45,9 @@ export default function ListComponent(props) {
                        <PlayIcon />
                   </ListItemIcon>
                   <ListItemText primary={ podcast.title } secondary={ podcast.description } />
-                  <ListItemSecondaryAction>
-                    <LinearProgress variant="determinate" value={ getProgress(podcast.id, podcast.duration) } style={{ width: 50 }} />
-                  </ListItemSecondaryAction>
+                  { getProgress(podcast.id, podcast.duration) ? <ListItemSecondaryAction>
+                    <LinearProgress variant="determinate" value={ getProgress(podcast.id, podcast.duration) } style={{ width: 50 }} /> 
+                  </ListItemSecondaryAction> : '' }
               </ListItem> 
             ) 
         }) 
