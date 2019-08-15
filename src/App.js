@@ -73,7 +73,7 @@ class App extends Component {
 
   playNext = () => {
     if(this.state.podcasts[this.state.activePodcastNumber + 1]) { 
-      this.setState({ activePodcastNumber: this.state.activePodcastNumber + 1, activePodcast: this.state.podcasts[this.state.activePodcastNumber + 1] });
+      this.setState({ autoPlay: true, activePodcastNumber: this.state.activePodcastNumber + 1, activePodcast: this.state.podcasts[this.state.activePodcastNumber + 1] });
       localStorage.setItem(`lastSelectedPodcast`, this.state.activePodcastNumber + 1);
     }
     else {
