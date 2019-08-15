@@ -18,7 +18,7 @@ export default function HeaderComponent() {
       <AppBar position="static" color="default">
         <Toolbar>
           <Typography variant="h6" color="inherit">
-            Misjonen
+            Misjonen podcast (P4)
           </Typography>
         </Toolbar>
       </AppBar>

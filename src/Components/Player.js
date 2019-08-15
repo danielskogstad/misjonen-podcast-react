@@ -20,8 +20,19 @@ const styles = theme => ({
         bottom: 0,
         paddingRight: 15
     },
+    progress: {
+        height: 10,
+        cursor: 'pointer',
+    },
     progressBar: {
         minWidth: 20,
+    },
+    clickBox: {
+        width: 300,
+        position: 'fixed',
+        height: 10,
+        marginTop: -10,
+        cursor: 'pointer'
     },
     playerStatus: {
         margin: 10,
@@ -175,9 +186,9 @@ class PlayerComponent extends Component {
     onProgressClick = (event) => {
         const clickedX = event.nativeEvent.offsetX;
         
-        var durationRelative = parseFloat((clickedX / this.progressBar.current.offsetWidth));
+        var percent = (clickedX / this.progressBar.current.offsetWidth);
 
-        this.player.currentTime = this.player.duration * durationRelative;
+        this.player.currentTime = percent * this.player.duration;
     }
 
     render() {
@@ -209,8 +220,9 @@ class PlayerComponent extends Component {
                             { this.state.currentTime }
                             </Typography>
                         </Box>
-                        <Box m={1} flexShrink={2} width={300}>
-                            <LinearProgress ref={this.progressBar} variant="determinate" value={this.state.durationPercentage} onClick={(e) => { this.onProgressClick(e) }} />
+                        <Box m={1} flexShrink={2} width={300}  >
+                            <LinearProgress ref={this.progressBar} className={this.props.classes.progress} variant="determinate" value={this.state.durationPercentage} />
+                            <div className={ this.props.classes.clickBox } onClick={(e) => { this.onProgressClick(e) }} />
                         </Box>
                         <Box m={1} flexShrink={0}>
                             <Typography noWrap variant="body2">

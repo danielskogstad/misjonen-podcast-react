@@ -31,3 +31,8 @@
     transform: rotate(360deg);
   }
 }
+
+.MuiLinearProgress-bar1Determinate {
+  transition: 0s !important;
+  cursor: pointer;
+}
