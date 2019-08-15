@@ -92,7 +92,7 @@ class App extends Component {
 
         <ListComponent onSelect={this.selectPodcast} podcasts={this.state.podcasts} activePodcastNumber={this.state.activePodcastNumber} />
 
-        { this.state.activePodcastNumber ? <PlayerComponent activePodcast={this.state.activePodcast} playNext={this.playNext} autoPlay={this.state.autoPlay} /> : '' }
+        { this.state.activePodcast ? <PlayerComponent activePodcast={this.state.activePodcast} playNext={this.playNext} autoPlay={this.state.autoPlay} /> : '' }
 
       </MuiThemeProvider>
     );

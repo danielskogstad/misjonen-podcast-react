@@ -5,7 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemIcon';
-import PlayIcon from '@material-ui/icons/PlayArrow';
+import PlayIcon from '@material-ui/icons/Mic';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +40,7 @@ export default function ListComponent(props) {
     <List component="nav" className={classes.root}>
       { props.podcasts.map((podcast, index) => {
             return (
-              <ListItem selected={props.activePodcastNumber === index} key={ podcast.id + index } button onClick={ () => onSelectPodcast(index) } value={index}>
+              <ListItem selected={props.activePodcastNumber === index} key={ podcast.id + "" + index } button onClick={ () => onSelectPodcast(index) } value={index}>
                    <ListItemIcon>
                        <PlayIcon />
                   </ListItemIcon>

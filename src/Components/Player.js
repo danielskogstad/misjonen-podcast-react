@@ -51,13 +51,7 @@ const styles = theme => ({
         overflow: 'hidden'
     },
     scrollText: {
-        '-webkit-transition': 'transform 8s, width 6s',
-        '-webkit-transition-timing-function': 'linear',
-        '-moz-transition': 'transform 8s, width 6s',
-        '-moz-transition-timing-function': 'linear',
-        'transition': 'transform 8s, width 6s',
-        'transition-timing-function': 'linear',
-        maxWidth: 400,
+        maxWidth: 500,
     }
   });
   
@@ -74,6 +68,7 @@ class PlayerComponent extends Component {
         this.state = {
             scrollTextTranslate: 0,
             scrollTextWidth: '100%',
+            scrollTextTransition: 'transform 9s, width 4s',
             currentTime: '00.00',
             duration: '00.00',
             durationPercentage: 0,
@@ -86,13 +81,13 @@ class PlayerComponent extends Component {
             const width = this.titleRef.current.offsetWidth;
             if(width < 200 || this.state.scrollTextTranslate === '-100%') {
                 if(this.state.scrollTextTranslate === '0') {
-                    this.setState({ scrollTextTranslate: '-100%', scrollTextWidth: '300%' });
+                    this.setState({ scrollTextTransition: 'transform 9s, width 4s', scrollTextTranslate: '-100%', scrollTextWidth: '300%' });
                 }
                 else {
-                    this.setState({ scrollTextTranslate: '0', scrollTextWidth: '100%' });
+                    this.setState({ scrollTextTransition: 'transform 0s, width 0s', scrollTextTranslate: '0', scrollTextWidth: '100%' });
                 }
             }
-        }, 10000);
+        }, 9500);
 
         this.player = this.rap.audioEl;
         this.setInitialState();
@@ -117,13 +112,14 @@ class PlayerComponent extends Component {
     } 
 
     updatePlayer = () => {
+
         var currentTimeString = this.getTimeString(this.player.currentTime);
-        var durationTimeString = this.getTimeString(this.player.duration);
+        var durationTimeString = '-' + this.getTimeString(this.player.duration - this.player.currentTime);
 
         var durationPercentage = parseFloat((this.player.currentTime / this.player.duration) * 100);
 
         this.setState({ currentTime: currentTimeString, duration: durationTimeString, durationPercentage: durationPercentage })
-        if(this.state.isPlaying) {
+        if(this.state.isPlaying && this.player.currentTime > 30) {
             const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
 
             if(cachedBookmark) {
@@ -195,6 +191,10 @@ class PlayerComponent extends Component {
         const scrollTextStyle = {
             transform: `translateX(${this.state.scrollTextTranslate})`,
             width: this.state.scrollTextWidth,
+            transition: this.state.scrollTextTransition,
+            transitionTimingFunction: 'linear',
+            WebkitTransition: this.state.scrollTextTransition,
+            WebkitTransitionTimingFunction: 'linear'
         }
 
         return (
