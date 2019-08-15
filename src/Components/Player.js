@@ -121,6 +121,9 @@ class PlayerComponent extends Component {
                 if(this.player.currentTime > bookmark.time) {
                     localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
                 }
+                else if(this.player.currentTime < bookmark.time && bookmark.time > this.player.duration - 5) {
+                    localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
+                }
             }
             else {
                 localStorage.setItem(`bookmark-${this.props.activePodcast.id}`, JSON.stringify({ time: this.player.currentTime }));
@@ -160,8 +163,11 @@ class PlayerComponent extends Component {
         const cachedBookmark = localStorage.getItem(`bookmark-${this.props.activePodcast.id}`);
         if(cachedBookmark) {
             const bookmark = JSON.parse(cachedBookmark);
+
             if(this.player.currentTime < bookmark.time - 5) {
-                this.player.currentTime = parseInt(bookmark.time);
+                if(bookmark.time < this.player.duration - 5) {
+                    this.player.currentTime = parseInt(bookmark.time);
+                }
             }   
         }
     }
